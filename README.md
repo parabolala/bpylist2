@@ -1,4 +1,4 @@
-# bpylist ![pypi version](https://img.shields.io/pypi/v/bpylist.svg) [![Build Status](https://travis-ci.org/Marketcircle/bpylist.svg?branch=master)](https://travis-ci.org/Marketcircle/bpylist)
+# bpylist [![pypi version](https://img.shields.io/pypi/v/bpylist.svg)](https://pypi.org/project/bpylist/) [![Build Status](https://travis-ci.org/Marketcircle/bpylist.svg?branch=master)](https://travis-ci.org/Marketcircle/bpylist)
 
 Implementation of the [Apple's Binary Plist](https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man5/plist.5.html) and the NSKeyedArchiver format
 
@@ -18,6 +18,7 @@ Reading is easy as well. The `generate` function takes a bytes object and return
 
 ```python
 from bpylist import bplist
+
 with open('myplist.plist', 'rb') as f:
     bpylist.parse(f.read())
 ```
@@ -28,7 +29,7 @@ with open('myplist.plist', 'rb') as f:
 
 **Unarchiving an object**
 
-```
+```python
 from bpylist import archiver
 
 with open('my_archived_object', 'rb') as f:
@@ -37,7 +38,7 @@ with open('my_archived_object', 'rb') as f:
 
 **Archiving an object**
 
-```
+```python
 from bpylist import archiver
 
 my_object = { 'foo':'bar', 'some_array': [1,2,3,4] }
@@ -50,8 +51,10 @@ archiver.archive(my_object)
 If you archive includes classes that are not "standard" Cocoa classes (`NSString`, `NSNumber`, `NSDate`, `NSNull`, `NSDictionary` or `NSArray`), you register a Python class that the Cocoa class maps to. The Python class needs to implement the `encode_archive` and `decode_archive` methods.
 
 
-```
+```python
 ## Define a Python Class
+
+from bpylist import archiver
 
 class MyClass:
     first_property = None
