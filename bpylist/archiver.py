@@ -5,7 +5,7 @@ from typing import Mapping
 # The magic number which Cocoa uses as an implementation version.
 # I don' think there were 99_999 previous implementations, I think
 # Apple just likes to store a lot of zeros
-NSKeyedArchiveVersion = 100000
+NSKeyedArchiveVersion = 100_000
 
 # Cached for convenience
 null_uid = uid(0)
