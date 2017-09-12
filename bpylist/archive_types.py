@@ -33,7 +33,7 @@ class timestamp(float):
         return timestamp(timestamp.unix2apple_epoch_delta + offset)
 
     def __str__(self):
-        return "bpylist.timestamp {}".format(self.to_datetime().__repr__())
+        return f"bpylist.timestamp {self.to_datetime().__repr__()}"
 
     def to_datetime(self) -> datetime:
         return datetime.fromtimestamp(self, timezone.utc)
@@ -47,7 +47,7 @@ class uid(int):
     """
 
     def __repr__(self):
-        return "uid({})".format(int(self))
+        return f"uid({int(self)})"
 
     def __str__(self):
-        return "uid({})".format(int(self))
+        return f"uid({int(self)})"

@@ -38,60 +38,52 @@ class UnsupportedArchiver(ArchiverError):
     """
 
     def __init__(self, alternate):
-        super().__init__("unsupported encoder: `{alternate}'".format(
-            alternate=alternate))
+        super().__init__(f"unsupported encoder: `{alternate}'")
 
 
 class UnsupportedArchiveVersion(ArchiverError):
     def __init__(self, version):
-        super().__init__("expected {expected}, got `{version}'".format(
-            expected=NSKeyedArchiveVersion,
-            version=version
-        ))
+        super().__init__(f"expected {NSKeyedArchiveVersion}, got `{version}'")
 
 
 class MissingTopObject(ArchiverError):
     def __init__(self, plist):
-        super().__init__("no top object! plist dump: {plist}".format(plist=plist))
+        super().__init__(f"no top object! plist dump: {plist}")
 
 
 class MissingTopObjectUID(ArchiverError):
     def __init__(self, top):
-        super().__init__("top object did not have a UID! dump: {top}".format(top=top))
+        super().__init__(f"top object did not have a UID! dump: {top}")
 
 
 class MissingObjectsArray(ArchiverError):
     def __init__(self, plist):
-        super().__init__("full plist dump: `{plist}'".format(plist=plist))
+        super().__init__(f"full plist dump: `{plist}'")
 
 
 class MissingClassMetaData(ArchiverError):
     def __init__(self, index, result):
-        super().__init__("$class had no metadata {index}: {result}".format(
-            index=index, result=result))
+        super().__init__(f"$class had no metadata {index}: {result}")
 
 
 class MissingClassName(ArchiverError):
     def __init__(self, meta):
-        super().__init__("$class had no $classname; $class = {meta}".format(
-            meta=meta))
+        super().__init__(f"$class had no $classname; $class = {meta}")
 
 
 class MissingClassUID(ArchiverError):
     def __init__(self, obj):
-        super().__init__("object has no $class: {obj}".format(obj=obj))
+        super().__init__(f"object has no $class: {obj}")
 
 
 class CircularReference(ArchiverError):
     def __init__(self, index):
-        super().__init__("archive has a cycle with {index}".format(index=index))
+        super().__init__(f"archive has a cycle with {index}")
 
 
 class MissingClassMapping(ArchiverError):
     def __init__(self, name, mapping):
-        super().__init__("no mapping for {name} in {mapping}".format(
-            name=name, mapping=mapping)
-        )
+        super().__init__(f"no mapping for {name} in {mapping}")
 
 
 class DictArchive:
