@@ -36,7 +36,7 @@ archiver.update_class_map({ 'crap.Foo': FooArchive })
 class UnarchiveTest(TestCase):
 
     def fixture(self, name):
-        return get_fixture(f'{name}_archive.plist')
+        return get_fixture('{name}_archive.plist'.format(name=name))
 
     def unarchive(self, plist):
         return archiver.unarchive(self.fixture(plist))
