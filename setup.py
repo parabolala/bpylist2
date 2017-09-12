@@ -18,7 +18,13 @@ setup(
     packages=[
         'bpylist',
     ],
- include_package_data=True,
-    
-    test_suite='tests'
+    include_package_data=True,
+    test_suite='tests',
+    classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Programming Language :: Python :: 3.6',
+          'Intended Audience :: Developers',
+          'Topic :: Software Development :: Libraries'
+    ]
+
 )
