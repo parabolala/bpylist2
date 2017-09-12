@@ -9,7 +9,7 @@ import cmath
 class BPListTest(TestCase):
 
     def fixture(self, name):
-        return get_fixture('{name}.plist'.format(name=name))
+        return get_fixture(f'{name}.plist')
 
 class TestBPlistParsing(BPListTest):
 
