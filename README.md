@@ -1,4 +1,4 @@
-# bpylist
+# bpylist ![pypi version](https://img.shields.io/pypi/v/bpylist.svg) [![Build Status](https://travis-ci.org/Marketcircle/bpylist.svg?branch=master)](https://travis-ci.org/Marketcircle/bpylist)
 
 Implementation of the [Apple's Binary Plist](https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man5/plist.5.html) and the NSKeyedArchiver format
 
