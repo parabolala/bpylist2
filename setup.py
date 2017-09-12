@@ -14,7 +14,7 @@ with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='bpylist',
-    version='0.1.1',
+    version='0.1.2',
     description = "parse and generate binary plists and NSKeyedArchiver archives",
     author='Marketcircle Inc.',
     author_email='cloud@marketcircle.com',
