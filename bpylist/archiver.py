@@ -237,6 +237,7 @@ class Unarchive:
 
         # if obj is a (semi-)primitive type (e.g. str)
         if not isinstance(raw_obj, dict):
+            self.unpacked_uids[index] = obj
             return raw_obj
 
         class_uid = raw_obj.get('$class')

@@ -124,6 +124,11 @@ class UnarchiveTest(TestCase):
         with self.assertRaises(archiver.CircularReference):
             self.unarchive('circular')
 
+    def test_unpack_primitive_multiple_refs(self):
+        expected = ['a', 'a']
+        actual = archiver.unarchive(archiver.archive(['a', 'a']))
+        self.assertEqual(actual, expected)
+
 
 class ArchiveTest(TestCase):
 
