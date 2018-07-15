@@ -13,13 +13,13 @@ with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = '\n' + f.read()
 
 setup(
-    name='bpylist',
-    version='0.1.5',
+    name='bpylist2',
+    version='2.0.1',
     description = "parse and generate binary plists and NSKeyedArchiver archives",
     long_description = long_description,
-    author='Marketcircle Inc.',
-    author_email='cloud@marketcircle.com',
-    url='https://github.com/marketcircle/bpylist',
+    author='Marketcircle Inc., Ievgen Varavva',
+    author_email='yvaravva@google.com',
+    url='https://github.com/xa4a/bpylist2',
     ext_modules=[
         bplist,
     ],
