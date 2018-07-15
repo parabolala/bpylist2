@@ -1,5 +1,7 @@
-bpylist |pypi version| |Build Status|
+bpylist2 |pypi version| |Build Status|
 =====================================
+
+This is a fork of Marketcircle/bpylist, which is hopefully more responsive to PRs.
 
 Implementation of the `Apple's Binary
 Plist <https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man5/plist.5.html>`__
@@ -118,7 +120,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-.. |pypi version| image:: https://img.shields.io/pypi/v/bpylist.svg
-   :target: https://pypi.org/project/bpylist/
-.. |Build Status| image:: https://travis-ci.org/Marketcircle/bpylist.svg?branch=master
-   :target: https://travis-ci.org/Marketcircle/bpylist
+.. |pypi version| image:: https://img.shields.io/pypi/v/bpylist2.svg
+   :target: https://pypi.org/project/bpylist2/
+.. |Build Status| image:: https://travis-ci.org/xa4a/bpylist2.svg?branch=master
+   :target: https://travis-ci.org/xa4a/bpylist2
