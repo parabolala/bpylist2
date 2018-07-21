@@ -1,6 +1,6 @@
-from bpylist import bplist
+from bpylist import bplist  # type: ignore
 from bpylist.archive_types import timestamp, uid, NSMutableData
-from typing import Mapping
+from typing import Mapping, Dict
 
 # The magic number which Cocoa uses as an implementation version.
 # I don' think there were 99_999 previous implementations, I think
@@ -17,7 +17,7 @@ def unarchive(plist: bytes) -> object:
 
 
 def unarchive_file(path: str) -> object:
-    "A convenience for unarchive(plist) which loads an archive from a file for you"
+    """Loads an archive from a file path."""
     with open(path, 'rb') as fd:
         return unarchive(fd.read())
 
@@ -164,11 +164,11 @@ class Unarchive:
     is non-trivial, and I don't want to have a mess of special cases.
     """
 
-    def __init__(self, input: bytes):
+    def __init__(self, input: bytes) -> None:
         self.input = input
-        self.unpacked_uids = {}
+        self.unpacked_uids: Dict[int, object] = {}
         self.top_uid = null_uid
-        self.objects = None
+        self.objects: list = []
 
     def unpack_archive_header(self):
         plist = bplist.parse(self.input)
@@ -325,7 +325,10 @@ class Archive:
 
         # TODO: this is where we might need to include the full class ancestry;
         #       though the open source code from apple does not appear to check
-        self.objects.append({ '$classes': [archiver], '$classname': archiver })
+        self.objects.append({
+            '$classes': [archiver],
+            '$classname': archiver
+        })
 
         return val
 
@@ -405,7 +408,7 @@ class Archive:
             self.objects.append(obj)
             return index
 
-        archive_obj = {}
+        archive_obj: Dict[str, object] = {}
         self.objects.append(archive_obj)
         self.encode_top_level(obj, archive_obj)
 
@@ -418,11 +421,12 @@ class Archive:
         if len(self.objects) == 1:
             self.archive(self.input)
 
-        d = { '$archiver': 'NSKeyedArchiver',
-              '$version': NSKeyedArchiveVersion,
-              '$objects': self.objects,
-              '$top': { 'root': uid(1) }
-                  }
+        d = {
+            '$archiver': 'NSKeyedArchiver',
+            '$version': NSKeyedArchiveVersion,
+            '$objects': self.objects,
+            '$top': {'root': uid(1)}
+        }
 
         return bplist.generate(d)
 
@@ -450,4 +454,4 @@ ARCHIVE_CLASS_MAP = {
 
 def update_class_map(new_map: Mapping[str, type]):
     UNARCHIVE_CLASS_MAP.update(new_map)
-    ARCHIVE_CLASS_MAP.update({ v: k for k, v in new_map.items() })
+    ARCHIVE_CLASS_MAP.update({v: k for k, v in new_map.items()})

@@ -3,7 +3,7 @@
 
 import io
 import os
-from setuptools import setup
+from setuptools import setup  # type: ignore
 from distutils.core import Extension
 
 bplist = Extension('bpylist.bplist', sources=['src/bplist.c'])
@@ -15,8 +15,9 @@ with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='bpylist2',
     version='2.0.1',
-    description = "parse and generate binary plists and NSKeyedArchiver archives",
-    long_description = long_description,
+    description=("parse and generate binary plists and "
+                 "NSKeyedArchiver archives"),
+    long_description=long_description,
     author='Marketcircle Inc., Ievgen Varavva',
     author_email='yvaravva@google.com',
     url='https://github.com/xa4a/bpylist2',
@@ -25,6 +26,18 @@ setup(
     ],
     packages=[
         'bpylist',
+    ],
+    setup_requires=[
+        "pycodestyle==2.3.1",
+        "pytest-runner",
+        "pytest-pylint",
+        "pytest-codestyle",
+        "pytest-flake8==1.0.1",
+        "pytest-mypy",
+    ],
+    tests_require=["pytest"],
+    install_requires=[
+      'dataclasses;python_version<"3.7"',
     ],
     include_package_data=True,
     test_suite='tests',

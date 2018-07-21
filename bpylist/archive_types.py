@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+
 class timestamp(float):
     """
     Represents the concept of time (in seconds) since the UNIX epoch.
@@ -51,6 +52,7 @@ class uid(int):
 
     def __str__(self):
         return f"uid({int(self)})"
+
 
 class NSMutableData:
     data: bytes

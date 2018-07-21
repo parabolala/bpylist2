@@ -1,8 +1,10 @@
 from unittest import TestCase
-from tests.fixtures import get_fixture
 from datetime import datetime, timezone
+
+from bpylist import archiver
+from bpylist import bplist  # type: ignore
 from bpylist.archive_types import uid, timestamp, NSMutableData
-from bpylist import archiver, bplist
+from tests.fixtures import get_fixture
 
 
 class FooArchive:
@@ -16,21 +18,34 @@ class FooArchive:
         self.empty = empty
         self.recursive = recursive
 
+    def __eq__(self, other):
+        for field in ['title', 'stamp', 'count', 'categories', 'metadata',
+                      'empty', 'recursive']:
+            if getattr(self, field) != getattr(other, field):
+                return False
+        return True
+
     def encode_archive(obj, archive):
         archive.encode('title', obj.title)
+        archive.encode('stamp', obj.stamp)
+        archive.encode('count', obj.count)
+        archive.encode('categories', obj.categories)
+        archive.encode('metadata', obj.metadata)
+        archive.encode('empty', obj.empty)
         archive.encode('recurse', obj.recursive)
 
     def decode_archive(archive):
-        title   = archive.decode('title')
-        stamp   = archive.decode('stamp')
-        count   = archive.decode('count')
-        cats    = archive.decode('categories')
-        meta    = archive.decode('metadata')
-        empty   = archive.decode('empty')
+        title = archive.decode('title')
+        stamp = archive.decode('stamp')
+        count = archive.decode('count')
+        cats = archive.decode('categories')
+        meta = archive.decode('metadata')
+        empty = archive.decode('empty')
         recurse = archive.decode('recursive')
         return FooArchive(title, stamp, count, cats, meta, empty, recurse)
 
-archiver.update_class_map({ 'crap.Foo': FooArchive })
+
+archiver.update_class_map({'crap.Foo': FooArchive})
 
 
 class UnarchiveTest(TestCase):
@@ -75,7 +90,7 @@ class UnarchiveTest(TestCase):
         with self.assertRaises(archiver.MissingClassMapping):
             self.unarchive('simple')
 
-        archiver.update_class_map({ 'crap.Foo': FooArchive })
+        archiver.update_class_map({'crap.Foo': FooArchive})
 
     def test_complains_about_missing_class_uid(self):
         with self.assertRaises(archiver.MissingClassUID):
@@ -152,31 +167,30 @@ class ArchiveTest(TestCase):
         self.archive('two')
         self.archive(3.14)
         self.archive([1, 'two', 3.14])
-        self.archive({ 'fruit': 'kiwi', 'veg': 'asparagus' })
+        self.archive({'fruit': 'kiwi', 'veg': 'asparagus'})
         self.archive(b'hello')
-        self.archive({ 'data': b'hello' })
+        self.archive({'data': b'hello'})
         self.archive(timestamp(0))
         self.archive([timestamp(-4)])
 
     def test_custom_type(self):
         foo = FooArchive('herp', timestamp(9001), 42,
                          ['strawberries', 'dragonfruit'],
-                         { 'key': 'value' },
+                         {'key': 'value'},
                          False,
                          None)
+        self.archive(foo)
 
     def test_circular_ref(self):
         foo = FooArchive('herp', timestamp(9001), 42,
                          ['strawberries', 'dragonfruit'],
-                         { 'key': 'value' },
+                         {'key': 'value'},
                          False,
                          None)
         foo.recursive = foo
         plist = bplist.parse(archiver.archive(foo))
         foo_obj = plist['$objects'][1]
         self.assertEqual(uid(1), foo_obj['recurse'])
-
-
 
 
 if __name__ == '__main__':

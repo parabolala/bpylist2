@@ -1,15 +1,18 @@
-from unittest import TestCase
-from tests.fixtures import get_fixture
-from datetime import datetime, timezone
-from bpylist import bplist
-from bpylist.archive_types import uid
-import plistlib
 import cmath
+from datetime import datetime, timezone
+import plistlib
+from unittest import TestCase
+
+from bpylist import bplist  # type: ignore
+from bpylist.archive_types import uid
+from tests.fixtures import get_fixture
+
 
 class BPListTest(TestCase):
 
     def fixture(self, name):
         return get_fixture(f'{name}.plist')
+
 
 class TestBPlistParsing(BPListTest):
 
@@ -143,7 +146,7 @@ class TestBPlistParsing(BPListTest):
         self.assertDictEqual(expected, self.parse('dict_big'))
 
     def test_nested_dict(self):
-        expected = { 'outer': { 'middle': { 'inner': 'value' } } }
+        expected = {'outer': {'middle': {'inner': 'value'}}}
         self.assertDictEqual(expected, self.parse('dict_nested'))
 
 
@@ -213,7 +216,7 @@ class TestBPlistGeneration(BPListTest):
         self.compare(b'hi')
 
     def test_long_data(self):
-        self.compare(b'a relatively long string that is more ' \
+        self.compare(b'a relatively long string that is more '
                      b'than 32 characters long')
 
     def test_emtpy_ascii_string(self):
@@ -269,7 +272,7 @@ class TestBPlistGeneration(BPListTest):
         self.compare(big_dict)
 
     def test_nested_dict(self):
-        self.compare({ 'outer': { 'middle': { 'inner': 'value' } } })
+        self.compare({'outer': {'middle': {'inner': 'value'}}})
 
 
 class TestBPlistArchiverSupport(BPListTest):
@@ -292,6 +295,7 @@ class TestBPlistArchiverSupport(BPListTest):
     def test_generate_unknown(self):
         with self.assertRaisesRegex(RuntimeError, "does not support"):
             bplist.generate(bplist)
+
 
 if __name__ == '__main__':
     from unittest import main
