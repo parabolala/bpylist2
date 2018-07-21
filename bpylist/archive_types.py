@@ -51,3 +51,22 @@ class uid(int):
 
     def __str__(self):
         return f"uid({int(self)})"
+
+class NSMutableData:
+    data: bytes
+
+    def __init__(self, data: bytes) -> None:
+        self.data = data
+
+    def encode_archive(self, archive):
+        archive.encode('NS.data', self.data)
+
+    def decode_archive(archive):
+        return NSMutableData(bytes(archive.decode('NS.data')))
+
+    def __eq__(self, other):
+        return self.data == other.data
+
+    def __repr__(self):
+        return "NSMutableData(%s bytes)" % (
+            'null' if self.data is None else len(self.data))

@@ -1,5 +1,5 @@
 from bpylist import bplist
-from bpylist.archive_types import timestamp, uid
+from bpylist.archive_types import timestamp, uid, NSMutableData
 from typing import Mapping
 
 # The magic number which Cocoa uses as an implementation version.
@@ -434,7 +434,8 @@ UNARCHIVE_CLASS_MAP = {
     'NSMutableArray':      ListArchive,
     'NSSet':               SetArchive,
     'NSMutableSet':        SetArchive,
-    'NSDate':              timestamp
+    'NSDate':              timestamp,
+    'NSMutableData':       NSMutableData,
     }
 
 
@@ -442,7 +443,8 @@ ARCHIVE_CLASS_MAP = {
     dict: 'NSDictionary',
     list: 'NSArray',
     set: 'NSSet',
-    timestamp: 'NSDate'
+    timestamp: 'NSDate',
+    NSMutableData: 'NSMutableData',
     }
 
 

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from tests.fixtures import get_fixture
 from datetime import datetime, timezone
-from bpylist.archive_types import uid, timestamp
+from bpylist.archive_types import uid, timestamp, NSMutableData
 from bpylist import archiver, bplist
 
 
@@ -127,6 +127,11 @@ class UnarchiveTest(TestCase):
     def test_unpack_primitive_multiple_refs(self):
         expected = ['a', 'a']
         actual = archiver.unarchive(archiver.archive(['a', 'a']))
+        self.assertEqual(actual, expected)
+
+    def test_unpack_nsmutabledata(self):
+        expected = NSMutableData(b'hello')
+        actual = self.unarchive('nsmutabledata')
         self.assertEqual(actual, expected)
 
 
