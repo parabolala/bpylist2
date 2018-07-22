@@ -4,7 +4,9 @@
 import io
 import os
 from setuptools import setup  # type: ignore
+# pylint: disable=wrong-import-order,import-error,no-name-in-module
 from distutils.core import Extension
+# pylint: enable=wrong-import-order,import-error,no-name-in-module
 
 bplist = Extension('bpylist.bplist', sources=['src/bplist.c'])
 
@@ -37,15 +39,15 @@ setup(
     ],
     tests_require=["pytest"],
     install_requires=[
-      'dataclasses;python_version<"3.7"',
+        'dataclasses;python_version<"3.7"',
     ],
     include_package_data=True,
     test_suite='tests',
     classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Programming Language :: Python :: 3.6',
-          'Intended Audience :: Developers',
-          'Topic :: Software Development :: Libraries'
+        'Development Status :: 5 - Production/Stable',
+        'Programming Language :: Python :: 3.6',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Libraries'
     ]
 
 )

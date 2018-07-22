@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 from datetime import datetime, timezone
 
 from bpylist import archiver
@@ -25,6 +25,7 @@ class FooArchive:
                 return False
         return True
 
+    @staticmethod
     def encode_archive(obj, archive):
         archive.encode('title', obj.title)
         archive.encode('stamp', obj.stamp)
@@ -34,6 +35,7 @@ class FooArchive:
         archive.encode('empty', obj.empty)
         archive.encode('recurse', obj.recursive)
 
+    @staticmethod
     def decode_archive(archive):
         title = archive.decode('title')
         stamp = archive.decode('stamp')
@@ -48,9 +50,10 @@ class FooArchive:
 archiver.update_class_map({'crap.Foo': FooArchive})
 
 
-class UnarchiveTest(TestCase):
+class UnarchiveTest(unittest.TestCase):
 
-    def fixture(self, name):
+    @staticmethod
+    def fixture(name):
         return get_fixture(f'{name}_archive.plist')
 
     def unarchive(self, plist):
@@ -97,43 +100,43 @@ class UnarchiveTest(TestCase):
             self.unarchive('missing_uid')
 
     def test_unpack_archive_with_null_value(self):
-        foo = self.unarchive('null')
-        self.assertIsNone(foo.empty)
+        obj = self.unarchive('null')
+        self.assertIsNone(obj.empty)
 
     def test_unpack_archive_with_no_values(self):
-        foo = self.unarchive('empty')
-        self.assertIsNone(foo.title)
-        self.assertIsNone(foo.count)
-        self.assertIsNone(foo.categories)
-        self.assertIsNone(foo.metadata)
+        obj = self.unarchive('empty')
+        self.assertIsNone(obj.title)
+        self.assertIsNone(obj.count)
+        self.assertIsNone(obj.categories)
+        self.assertIsNone(obj.metadata)
 
     def test_unpack_simple_archive(self):
-        foo = self.unarchive('simple')
-        self.assertEqual('yo', foo.title)
-        self.assertEqual(42, foo.count)
+        obj = self.unarchive('simple')
+        self.assertEqual('yo', obj.title)
+        self.assertEqual(42, obj.count)
 
     def test_unpack_complex_archive(self):
-        foo = self.unarchive('complex')
-        self.assertEqual('yo', foo.title)
-        self.assertEqual(42, foo.count)
-        self.assertEqual(['banana', 'apple'], foo.categories)
-        self.assertEqual({'fruit': 'kiwi', 'veg': 'asparagus'}, foo.metadata)
+        obj = self.unarchive('complex')
+        self.assertEqual('yo', obj.title)
+        self.assertEqual(42, obj.count)
+        self.assertEqual(['banana', 'apple'], obj.categories)
+        self.assertEqual({'fruit': 'kiwi', 'veg': 'asparagus'}, obj.metadata)
 
     def test_unpack_recursive_archive(self):
-        foo = self.unarchive('recursive')
-        bar = foo.recursive
-        self.assertTrue('hello', bar.title)
-        self.assertTrue('yo', foo.title)
+        obj = self.unarchive('recursive')
+        inner = obj.recursive
+        self.assertEqual('yo', inner.title)
+        self.assertEqual('hello', obj.title)
 
     def test_unpack_date(self):
         exp = datetime(2017, 2, 23, 6, 15, 58, 684097, tzinfo=timezone.utc)
-        foo = self.unarchive('date')
-        act = foo.stamp.to_datetime()
+        obj = self.unarchive('date')
+        act = obj.stamp.to_datetime()
         self.assertEqual(exp, act)
 
     def test_unpack_data(self):
-        foo = self.unarchive('data')
-        self.assertEqual(b'', foo.stamp)
+        obj = self.unarchive('data')
+        self.assertEqual(b'', obj.stamp)
 
     def test_unpack_circular_ref(self):
         with self.assertRaises(archiver.CircularReference):
@@ -150,7 +153,7 @@ class UnarchiveTest(TestCase):
         self.assertEqual(actual, expected)
 
 
-class ArchiveTest(TestCase):
+class ArchiveTest(unittest.TestCase):
 
     def archive(self, obj):
         archived = archiver.archive(obj)
@@ -174,25 +177,24 @@ class ArchiveTest(TestCase):
         self.archive([timestamp(-4)])
 
     def test_custom_type(self):
-        foo = FooArchive('herp', timestamp(9001), 42,
+        obj = FooArchive('herp', timestamp(9001), 42,
                          ['strawberries', 'dragonfruit'],
                          {'key': 'value'},
                          False,
                          None)
-        self.archive(foo)
+        self.archive(obj)
 
     def test_circular_ref(self):
-        foo = FooArchive('herp', timestamp(9001), 42,
+        obj = FooArchive('herp', timestamp(9001), 42,
                          ['strawberries', 'dragonfruit'],
                          {'key': 'value'},
                          False,
                          None)
-        foo.recursive = foo
-        plist = bplist.parse(archiver.archive(foo))
+        obj.recursive = obj
+        plist = bplist.parse(archiver.archive(obj))
         foo_obj = plist['$objects'][1]
         self.assertEqual(uid(1), foo_obj['recurse'])
 
 
 if __name__ == '__main__':
-    from unittest import main
-    main()
+    unittest.main()

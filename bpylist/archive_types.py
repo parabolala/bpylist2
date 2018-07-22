@@ -23,11 +23,13 @@ class timestamp(float):
 
     unix2apple_epoch_delta = 978307200.0
 
+    @staticmethod
     def encode_archive(obj, archive):
         "Delegate for packing timestamps back into the NSDate archive format"
         offset = obj - timestamp.unix2apple_epoch_delta
         archive.encode('NS.time', offset)
 
+    @staticmethod
     def decode_archive(archive):
         "Delegate for unpacking NSDate objects from an archiver.Archive"
         offset = archive.decode('NS.time')
@@ -63,6 +65,7 @@ class NSMutableData:
     def encode_archive(self, archive):
         archive.encode('NS.data', self.data)
 
+    @staticmethod
     def decode_archive(archive):
         return NSMutableData(bytes(archive.decode('NS.data')))
 

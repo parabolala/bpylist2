@@ -1,6 +1,7 @@
+from typing import Mapping, Dict
+
 from bpylist import bplist  # type: ignore
 from bpylist.archive_types import timestamp, uid, NSMutableData
-from typing import Mapping, Dict
 
 # The magic number which Cocoa uses as an implementation version.
 # I don' think there were 99_999 previous implementations, I think
@@ -89,16 +90,17 @@ class MissingClassMapping(ArchiverError):
 class DictArchive:
     "Delegate for packing/unpacking NS(Mutable)Dictionary objects"
 
-    def decode_archive(archive):
-        key_uids = archive.decode('NS.keys')
-        val_uids = archive.decode('NS.objects')
+    @staticmethod
+    def decode_archive(archive_obj):
+        key_uids = archive_obj.decode('NS.keys')
+        val_uids = archive_obj.decode('NS.objects')
 
         count = len(key_uids)
         d = dict()
 
         for i in range(count):
-            key = archive._decode_index(key_uids[i])
-            val = archive._decode_index(val_uids[i])
+            key = archive_obj.decode_index(key_uids[i])
+            val = archive_obj.decode_index(val_uids[i])
             d[key] = val
 
         return d
@@ -107,17 +109,19 @@ class DictArchive:
 class ListArchive:
     "Delegate for packing/unpacking NS(Mutable)Array objects"
 
-    def decode_archive(archive):
-        uids = archive.decode('NS.objects')
-        return [archive._decode_index(index) for index in uids]
+    @staticmethod
+    def decode_archive(archive_obj):
+        uids = archive_obj.decode('NS.objects')
+        return [archive_obj.decode_index(index) for index in uids]
 
 
 class SetArchive:
     "Delegate for packing/unpacking NS(Mutable)Set objects"
 
-    def decode_archive(archive):
-        uids = archive.decode('NS.objects')
-        return set([archive._decode_index(index) for index in uids])
+    @staticmethod
+    def decode_archive(archive_obj):
+        uids = archive_obj.decode('NS.objects')
+        return {archive_obj.decode_index(index) for index in uids}
 
 
 class ArchivedObject:
@@ -133,7 +137,7 @@ class ArchivedObject:
         self._object = obj
         self._unarchiver = unarchiver
 
-    def _decode_index(self, index: uid):
+    def decode_index(self, index: uid):
         return self._unarchiver.decode_object(index)
 
     def decode(self, key: str):
@@ -164,8 +168,8 @@ class Unarchive:
     is non-trivial, and I don't want to have a mess of special cases.
     """
 
-    def __init__(self, input: bytes) -> None:
-        self.input = input
+    def __init__(self, input_bytes: bytes) -> None:
+        self.input = input_bytes
         self.unpacked_uids: Dict[int, object] = {}
         self.top_uid = null_uid
         self.objects: list = []
@@ -294,8 +298,8 @@ class Archive:
     # in the archive
     inline_types = [int, float, bool]
 
-    def __init__(self, input):
-        self.input = input
+    def __init__(self, input_obj):
+        self.input = input_obj
         # cache/map class names (str) to uids
         self.class_map = {}
         # cache/map of already archived objects to uids (to avoid cycles)
