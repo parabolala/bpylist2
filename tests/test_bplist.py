@@ -1,15 +1,19 @@
-from unittest import TestCase
-from tests.fixtures import get_fixture
-from datetime import datetime, timezone
-from bpylist import bplist
-from bpylist.archive_types import uid
-import plistlib
 import cmath
+from datetime import datetime, timezone
+import plistlib
+from unittest import TestCase
+
+from bpylist import bplist  # type: ignore
+from bpylist.archive_types import uid
+from tests.fixtures import get_fixture
+
 
 class BPListTest(TestCase):
 
-    def fixture(self, name):
+    @staticmethod
+    def fixture(name):
         return get_fixture(f'{name}.plist')
+
 
 class TestBPlistParsing(BPListTest):
 
@@ -57,7 +61,8 @@ class TestBPlistParsing(BPListTest):
     def test_float64(self):
         self.assertEqual(2.71828182845904, self.parse('float64'))
 
-    def tz(self):
+    @staticmethod
+    def tz():
         return timezone.utc
 
     def test_past_date(self):
@@ -133,8 +138,8 @@ class TestBPlistParsing(BPListTest):
 
     def test_big_dict(self):
         expected = {
-            'a': 1,  'b': 2,  'c': 3,  'd': 4,  'e': 5,  'f': 6,
-            'g': 7,  'h': 8,  'i': 9,  'j': 10, 'k': 11, 'l': 12,
+            'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6,
+            'g': 7, 'h': 8, 'i': 9, 'j': 10, 'k': 11, 'l': 12,
             'm': 13, 'n': 14, 'o': 15, 'p': 16, 'q': 17, 'r': 18,
             's': 19, 't': 20, 'u': 21, 'v': 22, 'w': 23, 'x': 24,
             'y': 25, 'z': 26, '0': 27, '1': 28, '2': 29, '3': 30,
@@ -143,7 +148,7 @@ class TestBPlistParsing(BPListTest):
         self.assertDictEqual(expected, self.parse('dict_big'))
 
     def test_nested_dict(self):
-        expected = { 'outer': { 'middle': { 'inner': 'value' } } }
+        expected = {'outer': {'middle': {'inner': 'value'}}}
         self.assertDictEqual(expected, self.parse('dict_nested'))
 
 
@@ -152,11 +157,11 @@ class TestBPlistParsing(BPListTest):
 class TestBPlistGeneration(BPListTest):
 
     def test_generates_equivalent_accessibility_info(self):
-        dict = plistlib.loads(self.fixture('AccessibilityDefinitions'))
-        self.assertDictEqual(dict, bplist.parse(bplist.generate(dict)))
+        d = plistlib.loads(self.fixture('AccessibilityDefinitions'))
+        self.assertDictEqual(d, bplist.parse(bplist.generate(d)))
 
-    def compare(self, object):
-        self.assertEqual(object, plistlib.loads(bplist.generate(object)))
+    def compare(self, obj):
+        self.assertEqual(obj, plistlib.loads(bplist.generate(obj)))
 
     def test_true(self):
         self.compare(True)
@@ -213,7 +218,7 @@ class TestBPlistGeneration(BPListTest):
         self.compare(b'hi')
 
     def test_long_data(self):
-        self.compare(b'a relatively long string that is more ' \
+        self.compare(b'a relatively long string that is more '
                      b'than 32 characters long')
 
     def test_emtpy_ascii_string(self):
@@ -259,8 +264,8 @@ class TestBPlistGeneration(BPListTest):
 
     def test_big_dict(self):
         big_dict = {
-            'a': 1,  'b': 2,  'c': 3,  'd': 4,  'e': 5,  'f': 6,
-            'g': 7,  'h': 8,  'i': 9,  'j': 10, 'k': 11, 'l': 12,
+            'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6,
+            'g': 7, 'h': 8, 'i': 9, 'j': 10, 'k': 11, 'l': 12,
             'm': 13, 'n': 14, 'o': 15, 'p': 16, 'q': 17, 'r': 18,
             's': 19, 't': 20, 'u': 21, 'v': 22, 'w': 23, 'x': 24,
             'y': 25, 'z': 26, '0': 27, '1': 28, '2': 29, '3': 30,
@@ -269,7 +274,7 @@ class TestBPlistGeneration(BPListTest):
         self.compare(big_dict)
 
     def test_nested_dict(self):
-        self.compare({ 'outer': { 'middle': { 'inner': 'value' } } })
+        self.compare({'outer': {'middle': {'inner': 'value'}}})
 
 
 class TestBPlistArchiverSupport(BPListTest):
@@ -292,6 +297,7 @@ class TestBPlistArchiverSupport(BPListTest):
     def test_generate_unknown(self):
         with self.assertRaisesRegex(RuntimeError, "does not support"):
             bplist.generate(bplist)
+
 
 if __name__ == '__main__':
     from unittest import main

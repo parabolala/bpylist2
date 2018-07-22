@@ -3,5 +3,8 @@ python:
   - "3.6"
   - "3.7-dev"
 
+install:
+  - pip install -U pip setuptools
+
 script:
 - "python setup.py test"

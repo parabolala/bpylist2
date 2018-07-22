@@ -1,6 +1,7 @@
-from bpylist import bplist
+from typing import Mapping, Dict
+
+from bpylist import bplist  # type: ignore
 from bpylist.archive_types import timestamp, uid, NSMutableData
-from typing import Mapping
 
 # The magic number which Cocoa uses as an implementation version.
 # I don' think there were 99_999 previous implementations, I think
@@ -17,7 +18,7 @@ def unarchive(plist: bytes) -> object:
 
 
 def unarchive_file(path: str) -> object:
-    "A convenience for unarchive(plist) which loads an archive from a file for you"
+    """Loads an archive from a file path."""
     with open(path, 'rb') as fd:
         return unarchive(fd.read())
 
@@ -89,16 +90,17 @@ class MissingClassMapping(ArchiverError):
 class DictArchive:
     "Delegate for packing/unpacking NS(Mutable)Dictionary objects"
 
-    def decode_archive(archive):
-        key_uids = archive.decode('NS.keys')
-        val_uids = archive.decode('NS.objects')
+    @staticmethod
+    def decode_archive(archive_obj):
+        key_uids = archive_obj.decode('NS.keys')
+        val_uids = archive_obj.decode('NS.objects')
 
         count = len(key_uids)
         d = dict()
 
         for i in range(count):
-            key = archive._decode_index(key_uids[i])
-            val = archive._decode_index(val_uids[i])
+            key = archive_obj.decode_index(key_uids[i])
+            val = archive_obj.decode_index(val_uids[i])
             d[key] = val
 
         return d
@@ -107,17 +109,19 @@ class DictArchive:
 class ListArchive:
     "Delegate for packing/unpacking NS(Mutable)Array objects"
 
-    def decode_archive(archive):
-        uids = archive.decode('NS.objects')
-        return [archive._decode_index(index) for index in uids]
+    @staticmethod
+    def decode_archive(archive_obj):
+        uids = archive_obj.decode('NS.objects')
+        return [archive_obj.decode_index(index) for index in uids]
 
 
 class SetArchive:
     "Delegate for packing/unpacking NS(Mutable)Set objects"
 
-    def decode_archive(archive):
-        uids = archive.decode('NS.objects')
-        return set([archive._decode_index(index) for index in uids])
+    @staticmethod
+    def decode_archive(archive_obj):
+        uids = archive_obj.decode('NS.objects')
+        return {archive_obj.decode_index(index) for index in uids}
 
 
 class ArchivedObject:
@@ -133,7 +137,7 @@ class ArchivedObject:
         self._object = obj
         self._unarchiver = unarchiver
 
-    def _decode_index(self, index: uid):
+    def decode_index(self, index: uid):
         return self._unarchiver.decode_object(index)
 
     def decode(self, key: str):
@@ -164,11 +168,11 @@ class Unarchive:
     is non-trivial, and I don't want to have a mess of special cases.
     """
 
-    def __init__(self, input: bytes):
-        self.input = input
-        self.unpacked_uids = {}
+    def __init__(self, input_bytes: bytes) -> None:
+        self.input = input_bytes
+        self.unpacked_uids: Dict[int, object] = {}
         self.top_uid = null_uid
-        self.objects = None
+        self.objects: list = []
 
     def unpack_archive_header(self):
         plist = bplist.parse(self.input)
@@ -294,8 +298,8 @@ class Archive:
     # in the archive
     inline_types = [int, float, bool]
 
-    def __init__(self, input):
-        self.input = input
+    def __init__(self, input_obj):
+        self.input = input_obj
         # cache/map class names (str) to uids
         self.class_map = {}
         # cache/map of already archived objects to uids (to avoid cycles)
@@ -325,7 +329,10 @@ class Archive:
 
         # TODO: this is where we might need to include the full class ancestry;
         #       though the open source code from apple does not appear to check
-        self.objects.append({ '$classes': [archiver], '$classname': archiver })
+        self.objects.append({
+            '$classes': [archiver],
+            '$classname': archiver
+        })
 
         return val
 
@@ -405,7 +412,7 @@ class Archive:
             self.objects.append(obj)
             return index
 
-        archive_obj = {}
+        archive_obj: Dict[str, object] = {}
         self.objects.append(archive_obj)
         self.encode_top_level(obj, archive_obj)
 
@@ -418,11 +425,12 @@ class Archive:
         if len(self.objects) == 1:
             self.archive(self.input)
 
-        d = { '$archiver': 'NSKeyedArchiver',
-              '$version': NSKeyedArchiveVersion,
-              '$objects': self.objects,
-              '$top': { 'root': uid(1) }
-                  }
+        d = {
+            '$archiver': 'NSKeyedArchiver',
+            '$version': NSKeyedArchiveVersion,
+            '$objects': self.objects,
+            '$top': {'root': uid(1)}
+        }
 
         return bplist.generate(d)
 
@@ -450,4 +458,4 @@ ARCHIVE_CLASS_MAP = {
 
 def update_class_map(new_map: Mapping[str, type]):
     UNARCHIVE_CLASS_MAP.update(new_map)
-    ARCHIVE_CLASS_MAP.update({ v: k for k, v in new_map.items() })
+    ARCHIVE_CLASS_MAP.update({v: k for k, v in new_map.items()})

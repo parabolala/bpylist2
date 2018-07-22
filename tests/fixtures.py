@@ -16,5 +16,6 @@ def naughty_strings() -> Iterator[str]:
     for string in data:
         yield string
 
+
 def full_change_log_bplist() -> bytes:
     return get_fixture('fullChangeLog.bplist')
