@@ -1,7 +1,9 @@
 import unittest
 from datetime import datetime, timezone
 
-from bpylist import archiver
+import dataclasses
+
+from bpylist import archiver, archive_types
 from bpylist import bplist  # type: ignore
 from bpylist.archive_types import uid, timestamp, NSMutableData
 from tests.fixtures import get_fixture
@@ -48,6 +50,24 @@ class FooArchive:
 
 
 archiver.update_class_map({'crap.Foo': FooArchive})
+
+
+@dataclasses.dataclass
+class FooDataclass(archive_types.DataclassArchiver):
+    int_field: int = 0
+    str_field: str = ""
+    float_field: float = -1.1
+    list_field: list = dataclasses.field(default_factory=list)
+
+
+@dataclasses.dataclass
+class DataclassMussingFields(archive_types.DataclassArchiver):
+    int_field: int = 0
+
+
+archiver.update_class_map({
+    'FooDataclass': FooDataclass,
+})
 
 
 class UnarchiveTest(unittest.TestCase):
@@ -152,6 +172,27 @@ class UnarchiveTest(unittest.TestCase):
         actual = self.unarchive('nsmutabledata')
         self.assertEqual(actual, expected)
 
+    def test_dataclass_unarchiver(self):
+        expected = FooDataclass(
+            int_field=5, str_field='hello', float_field=3.15,
+            list_field=['foo', 'bar', 'baz']
+        )
+        actual = self.unarchive('dataclass')
+        self.assertEqual(actual, expected)
+
+    def test_dataclass_not_fully_mapped(self):
+        archiver.update_class_map({
+            'FooDataclass': DataclassMussingFields,
+        })
+        try:
+            with self.assertRaises(archive_types.Error):
+                self.unarchive('dataclass')
+        finally:
+            # Restore mapping.
+            archiver.update_class_map({
+                'FooDataclass': FooDataclass,
+            })
+
 
 class ArchiveTest(unittest.TestCase):
 
@@ -194,6 +235,13 @@ class ArchiveTest(unittest.TestCase):
         plist = bplist.parse(archiver.archive(obj))
         foo_obj = plist['$objects'][1]
         self.assertEqual(uid(1), foo_obj['recurse'])
+
+    def test_dataclass(self):
+        obj = FooDataclass(
+            int_field=15, str_field='hello there', float_field=3.13,
+            list_field=['foo', 'baz']
+        )
+        self.archive(obj)
 
 
 if __name__ == '__main__':

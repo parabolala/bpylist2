@@ -1,5 +1,5 @@
 bpylist2 |pypi version| |Build Status|
-=====================================
+======================================
 
 This is a fork of Marketcircle/bpylist, which is hopefully more responsive to PRs.
 
@@ -63,7 +63,23 @@ Custom objects
 
 If you archive includes classes that are not "standard" Cocoa classes
 (``NSString``, ``NSNumber``, ``NSDate``, ``NSNull``, ``NSDictionary`` or
-``NSArray``), you register a Python class that the Cocoa class maps to.
+``NSArray``), you register a Python class that the Cocoa class maps to and
+register it.
+
+The simplest way to define a class is by providing a python dataclass, for
+example you define a class with all the fields of the archived object:
+
+.. code:: python
+
+    @dataclasses.dataclass
+    class MyClass(DataclassArchiver):
+        int_field: int = 0
+        str_field: str = ""
+        float_field: float = -1.1
+        list_field: list = dataclasses.field(default_factory=list)
+
+Alternatively you can implement custom unarchiving code.  
+
 The Python class needs to implement the ``encode_archive`` and
 ``decode_archive`` methods.
 
@@ -89,6 +105,10 @@ The Python class needs to implement the ``encode_archive`` and
             first = archive.decode('first_property')
             second = archive.decode('second_property')
             return MyClass(first, second)
+
+When the mapper class is defined, register it with unarchiver:
+
+.. code:: python
 
     ## Register the class for the Cocoa class 'MyCocoaClass'
 

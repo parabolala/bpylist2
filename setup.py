@@ -36,6 +36,7 @@ setup(
         "pytest-codestyle",
         "pytest-flake8==1.0.1",
         "pytest-mypy",
+        'dataclasses;python_version<"3.7"',
     ],
     tests_require=["pytest"],
     install_requires=[

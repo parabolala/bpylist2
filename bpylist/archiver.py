@@ -134,14 +134,14 @@ class ArchivedObject:
     """
 
     def __init__(self, obj, unarchiver):
-        self._object = obj
+        self.object = obj
         self._unarchiver = unarchiver
 
     def decode_index(self, index: uid):
         return self._unarchiver.decode_object(index)
 
     def decode(self, key: str):
-        return self._unarchiver.decode_key(self._object, key)
+        return self._unarchiver.decode_key(self.object, key)
 
 
 class CycleToken:
