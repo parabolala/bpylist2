@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 
 import dataclasses
 
@@ -120,22 +121,10 @@ class uid(int):
         return f"uid({int(self)})"
 
 
-class NSMutableData:
-    data: bytes
-
-    def __init__(self, data: bytes) -> None:
-        self.data = data
-
-    def encode_archive(self, archive):
-        archive.encode('NS.data', self.data)
-
-    @staticmethod
-    def decode_archive(archive):
-        return NSMutableData(bytes(archive.decode('NS.data')))
-
-    def __eq__(self, other):
-        return self.data == other.data
+@dataclasses.dataclass(frozen=True)
+class NSMutableData(DataclassArchiver):
+    NSdata: Optional[bytes] = None
 
     def __repr__(self):
         return "NSMutableData(%s bytes)" % (
-            'null' if self.data is None else len(self.data))
+            'null' if self.NSdata is None else len(self.NSdata))
