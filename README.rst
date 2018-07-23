@@ -114,6 +114,16 @@ When the mapper class is defined, register it with unarchiver:
 
     archiver.update_class_map({ 'MyCocoaClass': FooArchive })
 
+
+How to publish a new version to PyPI
+------------------------------------
+
+.. code-block:: bash
+
+    $ pip install twine wheel
+    $ python setup.py sdist bdist_wheel
+    $ twine upload dist/*
+
 License
 -------
 
