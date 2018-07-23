@@ -16,7 +16,7 @@ with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='bpylist2',
-    version='2.0.2',
+    version='2.0.1',
     description=("parse and generate binary plists and "
                  "NSKeyedArchiver archives"),
     long_description=long_description,

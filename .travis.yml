@@ -1,16 +1,10 @@
 language: python
 python:
-- '3.6'
-- 3.7-dev
+  - "3.6"
+  - "3.7-dev"
+
 install:
-- pip install -U pip setuptools
+  - pip install -U pip setuptools
+
 script:
-- python setup.py test
-deploy:
-  provider: pypi
-  user: parabolala
-  password:
-    secure: Y8opB8kHWnHJpNU7pvE91Wmc28lOWBl0Jph2EY/r4oDRylMXC7rIo21DFlqzjpGWi1+Fbw4LKZetXu6Zvasyg31UWa9BGRzWXejMEfcypVemcpz1MY7YPZ5L0i5c8z9YYUXGtknnY//ckxZkpZHB3ddBpV2g4zL1YBXBoEQXzs1CtbJRDXWcE4ReEXoLBuzq7XmaOeslt1a0S6AdDuBq4EEH2umX5sKYnC3c8pYv2AVbzKXFE0Re20Ulib0Er1xR7NDnkjhMGYNMp8oNvihuCmCKGmQQ220nl40OKYEPYjzNM2jIFCJiYx2y0r93j9ISHQ9vEH7HtxyrD4WEQTTJv8UUdarm41a0x3km8q23LmalivjwZMtTH0Jjpq1FX0ApKflXvBU6UWJf+tpagNefjpzTKZGDSXwNyp2lGewNZFbycEFjqSbvoEcR4ThBc7EVZZeL2qJaF1jpg/RwUgjoX4kDbyfPda2VluckXKA5j5DleiLBp+jlkv3mCH+QKai8Mjm6xMw3QvCTpJDgKrcz+WIswPWCpfo5M/sS+QzCkNl6d3/pU9Gxzv7ZfnqfcwhN9rbeIh9S2tuSnL+iRS52gKT9JapkK+jB77xGsaY3496GO0U6GQdyd4/fUYKi0C3REa/td/ZEeAtD6bMbROMB4h+ITkVnKNDaZ71XberrVQ0=
-  on:
-    tags: true
-  distributions: sdist bdist_wheel
+- "python setup.py test"
