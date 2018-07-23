@@ -121,7 +121,7 @@ class uid(int):
         return f"uid({int(self)})"
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass()
 class NSMutableData(DataclassArchiver):
     NSdata: Optional[bytes] = None
 
