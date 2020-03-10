@@ -13,24 +13,7 @@ Usage
 Binary Plists
 ~~~~~~~~~~~~~
 
-Generating bplist is easy, and similar to the ``plistlib`` module in
-Python's Standard Library
-
-.. code:: python
-
-    from bpylist import bplist
-
-    bpylist.generate(my_object)
-
-Reading is easy as well. The ``generate`` function takes a bytes object
-and returns the top-level object of the binary plist.
-
-.. code:: python
-
-    from bpylist import bplist
-
-    with open('myplist.plist', 'rb') as f:
-        bpylist.parse(f.read())
+For reading and writing plain PLists please use stdlib `plistlib` library.
 
 KeyedArchives
 ~~~~~~~~~~~~~

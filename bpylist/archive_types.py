@@ -107,20 +107,6 @@ class timestamp(float):
         return datetime.fromtimestamp(self, timezone.utc)
 
 
-class uid(int):
-    """
-    An unique identifier used by Cocoa's NSArchiver to identify a particular
-    class that should be used to map an archived object back into a native
-    object.
-    """
-
-    def __repr__(self):
-        return f"uid({int(self)})"
-
-    def __str__(self):
-        return f"uid({int(self)})"
-
-
 @dataclasses.dataclass()
 class NSMutableData(DataclassArchiver):
     NSdata: Optional[bytes] = None
