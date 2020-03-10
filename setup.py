@@ -11,7 +11,7 @@ with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='bpylist2',
-    version='2.0.3',
+    version='3.0.0',
     description=("parse and generate NSKeyedArchiver archives"),
     long_description=long_description,
     author='Marketcircle Inc., Ievgen Varavva',
