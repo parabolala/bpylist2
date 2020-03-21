@@ -1,7 +1,7 @@
 bpylist2 |pypi version| |Build Status|
 ======================================
 
-This is a fork of xa4a/`bpylist2 <https://github.com/xa4a/bpylist2>` version 2.0.3 
+This is a fork of `xa4a/bpylist2 <https://github.com/xa4a/bpylist2>`__ version 2.0.3 
 modified specifically for rhettbull/osxphotos to fix build errors with python 3.6
 3.7
 
