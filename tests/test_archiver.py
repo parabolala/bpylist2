@@ -1,11 +1,11 @@
-from datetime import datetime, timezone
-import plistlib
 import unittest
+from datetime import datetime, timezone
 
 import dataclasses
 
 from bpylist import archiver, archive_types
-from bpylist.archive_types import timestamp, NSMutableData
+from bpylist import bplist  # type: ignore
+from bpylist.archive_types import uid, timestamp, NSMutableData
 from tests.fixtures import get_fixture
 
 
@@ -232,9 +232,9 @@ class ArchiveTest(unittest.TestCase):
                          False,
                          None)
         obj.recursive = obj
-        plist = plistlib.loads(archiver.archive(obj))
+        plist = bplist.parse(archiver.archive(obj))
         foo_obj = plist['$objects'][1]
-        self.assertEqual(plistlib.UID(1), foo_obj['recurse'])
+        self.assertEqual(uid(1), foo_obj['recurse'])
 
     def test_dataclass(self):
         obj = FooDataclass(
