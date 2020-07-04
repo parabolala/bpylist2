@@ -1,11 +1,7 @@
 bpylist2 |pypi version| |Build Status|
 ======================================
 
-This is a fork of `xa4a/bpylist2 <https://github.com/xa4a/bpylist2>`__ version 2.0.3 
-modified specifically for rhettbull/osxphotos to fix build errors with python 3.6
-3.7
-
-For any new project, I recommend you use python 3.8 and most recent version of xa4a/bpylist2
+This is a fork of Marketcircle/bpylist, which is hopefully more responsive to PRs.
 
 Implementation of the `Apple's Binary
 Plist <https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man5/plist.5.html>`__
@@ -17,24 +13,7 @@ Usage
 Binary Plists
 ~~~~~~~~~~~~~
 
-Generating bplist is easy, and similar to the ``plistlib`` module in
-Python's Standard Library
-
-.. code:: python
-
-    from bpylist import bplist
-
-    bpylist.generate(my_object)
-
-Reading is easy as well. The ``generate`` function takes a bytes object
-and returns the top-level object of the binary plist.
-
-.. code:: python
-
-    from bpylist import bplist
-
-    with open('myplist.plist', 'rb') as f:
-        bpylist.parse(f.read())
+For reading and writing plain PLists please use stdlib `plistlib` library.
 
 KeyedArchives
 ~~~~~~~~~~~~~

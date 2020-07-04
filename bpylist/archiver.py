@@ -1,7 +1,13 @@
+import sys
+
+if sys.version_info < (3, 8, 0):
+    from . import _plistlib as plistlib
+else:
+    import plistlib
+
 from typing import Mapping, Dict
 
-from bpylist import bplist  # type: ignore
-from bpylist.archive_types import timestamp, uid, NSMutableData
+from bpylist.archive_types import timestamp, NSMutableData
 
 # The magic number which Cocoa uses as an implementation version.
 # I don' think there were 99_999 previous implementations, I think
@@ -9,7 +15,7 @@ from bpylist.archive_types import timestamp, uid, NSMutableData
 NSKeyedArchiveVersion = 100_000
 
 # Cached for convenience
-null_uid = uid(0)
+NULL_UID = plistlib.UID(0)
 
 
 def unarchive(plist: bytes) -> object:
@@ -19,7 +25,7 @@ def unarchive(plist: bytes) -> object:
 
 def unarchive_file(path: str) -> object:
     """Loads an archive from a file path."""
-    with open(path, 'rb') as fd:
+    with open(path, "rb") as fd:
         return unarchive(fd.read())
 
 
@@ -92,8 +98,8 @@ class DictArchive:
 
     @staticmethod
     def decode_archive(archive_obj):
-        key_uids = archive_obj.decode('NS.keys')
-        val_uids = archive_obj.decode('NS.objects')
+        key_uids = archive_obj.decode("NS.keys")
+        val_uids = archive_obj.decode("NS.objects")
 
         count = len(key_uids)
         d = dict()
@@ -111,7 +117,7 @@ class ListArchive:
 
     @staticmethod
     def decode_archive(archive_obj):
-        uids = archive_obj.decode('NS.objects')
+        uids = archive_obj.decode("NS.objects")
         return [archive_obj.decode_index(index) for index in uids]
 
 
@@ -120,7 +126,7 @@ class SetArchive:
 
     @staticmethod
     def decode_archive(archive_obj):
-        uids = archive_obj.decode('NS.objects')
+        uids = archive_obj.decode("NS.objects")
         return {archive_obj.decode_index(index) for index in uids}
 
 
@@ -137,7 +143,7 @@ class ArchivedObject:
         self.object = obj
         self._unarchiver = unarchiver
 
-    def decode_index(self, index: uid):
+    def decode_index(self, index: plistlib.UID):
         return self._unarchiver.decode_object(index)
 
     def decode(self, key: str):
@@ -146,7 +152,6 @@ class ArchivedObject:
 
 class CycleToken:
     "token used in Unarchive's unpacked_uids cache to help detect cycles"
-    pass
 
 
 class Unarchive:
@@ -170,41 +175,42 @@ class Unarchive:
 
     def __init__(self, input_bytes: bytes) -> None:
         self.input = input_bytes
-        self.unpacked_uids: Dict[int, object] = {}
-        self.top_uid = null_uid
+        self.unpacked_uids: Dict[plistlib.UID, object] = {}
+        self.top_uid = NULL_UID
         self.objects: list = []
 
     def unpack_archive_header(self):
-        plist = bplist.parse(self.input)
+        plist = plistlib.loads(self.input)
 
-        archiver = plist.get('$archiver')
-        if archiver != 'NSKeyedArchiver':
+        archiver = plist.get("$archiver")
+        if archiver != "NSKeyedArchiver":
             raise UnsupportedArchiver(archiver)
 
-        version = plist.get('$version')
+        version = plist.get("$version")
         if version != NSKeyedArchiveVersion:
             raise UnsupportedArchiveVersion(version)
 
-        top = plist.get('$top')
+        top = plist.get("$top")
         if not isinstance(top, dict):
             raise MissingTopObject(plist)
 
-        self.top_uid = top.get('root')
-        if not isinstance(self.top_uid, uid):
+        top_uid = top.get("root")
+        if top_uid is None:
             raise MissingTopObjectUID(top)
+        self.top_uid = top_uid
 
-        self.objects = plist.get('$objects')
+        self.objects = plist.get("$objects")
         if not isinstance(self.objects, list):
             raise MissingObjectsArray(plist)
 
-    def class_for_uid(self, index: uid):
+    def class_for_uid(self, index: plistlib.UID):
         "use the UNARCHIVE_CLASS_MAP to find the unarchiving delegate of a uid"
 
-        meta = self.objects[index]
+        meta = self.objects[index.data]
         if not isinstance(meta, dict):
             raise MissingClassMetaData(index, meta)
 
-        name = meta.get('$classname')
+        name = meta.get("$classname")
         if not isinstance(name, str):
             raise MissingClassName(meta)
 
@@ -216,14 +222,14 @@ class Unarchive:
 
     def decode_key(self, obj, key):
         val = obj.get(key)
-        if isinstance(val, uid):
+        if isinstance(val, plistlib.UID):
             return self.decode_object(val)
         return val
 
-    def decode_object(self, index: uid):
+    def decode_object(self, index: plistlib.UID):
         # index 0 always points to the $null object, which is the archive's
         # special way of saying the value is null/nil/none
-        if index == 0:
+        if index == NULL_UID:
             return None
 
         obj = self.unpacked_uids.get(index)
@@ -233,7 +239,7 @@ class Unarchive:
         if obj is not None:
             return obj
 
-        raw_obj = self.objects[index]
+        raw_obj = self.objects[index.data]
 
         # put a temp object in place, in case we have a circular
         # reference, which we do not really support
@@ -244,8 +250,8 @@ class Unarchive:
             self.unpacked_uids[index] = obj
             return raw_obj
 
-        class_uid = raw_obj.get('$class')
-        if not isinstance(class_uid, uid):
+        class_uid = raw_obj.get("$class")
+        if class_uid is None:
             raise MissingClassUID(raw_obj)
 
         klass = self.class_for_uid(class_uid)
@@ -292,7 +298,7 @@ class Archive:
     """
 
     # types which do not require the "object" encoding for an archive;
-    primitive_types = [int, float, bool, str, bytes, uid]
+    primitive_types = [int, float, bool, str, bytes, plistlib.UID]
 
     # types which require no extra encoding at all, they can be inlined
     # in the archive
@@ -305,9 +311,9 @@ class Archive:
         # cache/map of already archived objects to uids (to avoid cycles)
         self.ref_map = {}
         # objects that go directly into the archive, always start with $null
-        self.objects = ['$null']
+        self.objects = ["$null"]
 
-    def uid_for_archiver(self, archiver: type) -> uid:
+    def uid_for_archiver(self, archiver: type) -> plistlib.UID:
         """
         Ensure the class definition for the archiver is included in the arcive.
 
@@ -324,15 +330,12 @@ class Archive:
         if val:
             return val
 
-        val = uid(len(self.objects))
+        val = plistlib.UID(len(self.objects))
         self.class_map[archiver] = val
 
         # TODO: this is where we might need to include the full class ancestry;
         #       though the open source code from apple does not appear to check
-        self.objects.append({
-            '$classes': [archiver],
-            '$classname': archiver
-        })
+        self.objects.append({"$classes": [archiver], "$classname": archiver})
 
         return val
 
@@ -345,18 +348,18 @@ class Archive:
         return self.archive(val)
 
     def encode_list(self, objs, archive_obj):
-        archiver_uid = self.uid_for_archiver('NSArray')
-        archive_obj['$class'] = archiver_uid
-        archive_obj['NS.objects'] = [self.archive(obj) for obj in objs]
+        archiver_uid = self.uid_for_archiver("NSArray")
+        archive_obj["$class"] = archiver_uid
+        archive_obj["NS.objects"] = [self.archive(obj) for obj in objs]
 
     def encode_set(self, objs, archive_obj):
-        archiver_uid = self.uid_for_archiver('NSSet')
-        archive_obj['$class'] = archiver_uid
-        archive_obj['NS.objects'] = [self.archive(obj) for obj in objs]
+        archiver_uid = self.uid_for_archiver("NSSet")
+        archive_obj["$class"] = archiver_uid
+        archive_obj["NS.objects"] = [self.archive(obj) for obj in objs]
 
     def encode_dict(self, obj, archive_obj):
-        archiver_uid = self.uid_for_archiver('NSDictionary')
-        archive_obj['$class'] = archiver_uid
+        archiver_uid = self.uid_for_archiver("NSDictionary")
+        archive_obj["$class"] = archiver_uid
 
         keys = []
         vals = []
@@ -364,8 +367,8 @@ class Archive:
             keys.append(self.archive(k))
             vals.append(self.archive(obj[k]))
 
-        archive_obj['NS.keys'] = keys
-        archive_obj['NS.objects'] = vals
+        archive_obj["NS.keys"] = keys
+        archive_obj["NS.objects"] = vals
 
     def encode_top_level(self, obj, archive_obj):
         "Encode obj and store the encoding in archive_obj"
@@ -387,16 +390,16 @@ class Archive:
                 raise MissingClassMapping(obj, ARCHIVE_CLASS_MAP)
 
             archiver_uid = self.uid_for_archiver(archiver)
-            archive_obj['$class'] = archiver_uid
+            archive_obj["$class"] = archiver_uid
 
             archive_wrapper = ArchivingObject(archive_obj, self)
             cls.encode_archive(obj, archive_wrapper)
 
-    def archive(self, obj) -> uid:
+    def archive(self, obj) -> plistlib.UID:
         "Add the encoded form of obj to the archive, returning the UID of obj."
 
         if obj is None:
-            return null_uid
+            return NULL_UID
 
         # the ref_map allows us to avoid infinite recursion caused by
         # cycles in the object graph by functioning as a sort of promise
@@ -404,7 +407,7 @@ class Archive:
         if ref:
             return ref
 
-        index = uid(len(self.objects))
+        index = plistlib.UID(len(self.objects))
         self.ref_map[id(obj)] = index
 
         cls = obj.__class__
@@ -426,34 +429,33 @@ class Archive:
             self.archive(self.input)
 
         d = {
-            '$archiver': 'NSKeyedArchiver',
-            '$version': NSKeyedArchiveVersion,
-            '$objects': self.objects,
-            '$top': {'root': uid(1)}
+            "$archiver": "NSKeyedArchiver",
+            "$version": NSKeyedArchiveVersion,
+            "$objects": self.objects,
+            "$top": {"root": plistlib.UID(1)},
         }
-
-        return bplist.generate(d)
+        return plistlib.dumps(d, fmt=plistlib.FMT_BINARY)  # pylint: disable=no-member
 
 
 UNARCHIVE_CLASS_MAP = {
-    'NSDictionary':        DictArchive,
-    'NSMutableDictionary': DictArchive,
-    'NSArray':             ListArchive,
-    'NSMutableArray':      ListArchive,
-    'NSSet':               SetArchive,
-    'NSMutableSet':        SetArchive,
-    'NSDate':              timestamp,
-    'NSMutableData':       NSMutableData,
-    }
+    "NSDictionary": DictArchive,
+    "NSMutableDictionary": DictArchive,
+    "NSArray": ListArchive,
+    "NSMutableArray": ListArchive,
+    "NSSet": SetArchive,
+    "NSMutableSet": SetArchive,
+    "NSDate": timestamp,
+    "NSMutableData": NSMutableData,
+}
 
 
 ARCHIVE_CLASS_MAP = {
-    dict: 'NSDictionary',
-    list: 'NSArray',
-    set: 'NSSet',
-    timestamp: 'NSDate',
-    NSMutableData: 'NSMutableData',
-    }
+    dict: "NSDictionary",
+    list: "NSArray",
+    set: "NSSet",
+    timestamp: "NSDate",
+    NSMutableData: "NSMutableData",
+}
 
 
 def update_class_map(new_map: Mapping[str, type]):
