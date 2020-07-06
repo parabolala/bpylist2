@@ -44,7 +44,7 @@ binary plist API.
 Custom objects
 ^^^^^^^^^^^^^^
 
-If you archive includes classes that are not "standard" Cocoa classes
+If your archive includes classes that are not "standard" Cocoa classes
 (``NSString``, ``NSNumber``, ``NSDate``, ``NSNull``, ``NSDictionary`` or
 ``NSArray``), you register a Python class that the Cocoa class maps to and
 register it.
@@ -97,6 +97,14 @@ When the mapper class is defined, register it with unarchiver:
 
     archiver.update_class_map({ 'MyCocoaClass': FooArchive })
 
+Implementation Note
+-------------------
+
+This package requires the version of `plistlib` included in the Python 3.8 
+standard library.  In order to support Python 3.6 and 3.7, a copy of the 
+Python 3.8 `plistlib <https://github.com/python/cpython/blob/e51dd9dad6590bf3a940723fbbaaf4f64a3c9228/Lib/plistlib.py>`__ 
+is bundled with `bpylist2` (Specifically, commit `9054967 <https://github.com/python/cpython/commit/90549676e063c2c818cfc14213d3adb7edcc2bd5>`__).  
+This version will only be used if `bpylist2` detects it is running on Python < 3.8.
 
 How to publish a new version to PyPI
 ------------------------------------
