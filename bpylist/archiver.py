@@ -1,13 +1,13 @@
 import sys
+from typing import Mapping, Dict
+
+from bpylist.archive_types import timestamp, NSMutableData
 
 if sys.version_info < (3, 8, 0):
     from . import _plistlib as plistlib
 else:
-    import plistlib
+    import plistlib  # type: ignore
 
-from typing import Mapping, Dict
-
-from bpylist.archive_types import timestamp, NSMutableData
 
 # The magic number which Cocoa uses as an implementation version.
 # I don' think there were 99_999 previous implementations, I think
@@ -437,8 +437,10 @@ class Archive:
             '$objects': self.objects,
             '$top': {'root': plistlib.UID(1)}
         }
+        # pylint: disable=no-member
         return plistlib.dumps(
-            d, fmt=plistlib.FMT_BINARY)  # pylint: disable=no-member
+            d, fmt=plistlib.FMT_BINARY)  # type: ignore
+        # pylint: enable=no-member
 
 
 UNARCHIVE_CLASS_MAP = {

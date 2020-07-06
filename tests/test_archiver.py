@@ -1,18 +1,18 @@
+import dataclasses
 from datetime import datetime, timezone
 import sys
-
-if sys.version_info < (3, 8, 0):
-    from bpylist import _plistlib as plistlib
-else:
-    import plistlib
-
 import unittest
-
-import dataclasses
 
 from bpylist import archiver, archive_types
 from bpylist.archive_types import timestamp, NSMutableData
 from tests.fixtures import get_fixture
+
+if sys.version_info < (3, 8, 0):
+    # pylint: disable=ungrouped-imports
+    from bpylist import _plistlib as plistlib
+    # pylint: enable=ungrouped-imports
+else:
+    import plistlib  # type: ignore
 
 
 class FooArchive:

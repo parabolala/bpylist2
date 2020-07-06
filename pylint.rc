@@ -16,6 +16,8 @@ disable=missing-docstring,
 		too-few-public-methods,
 		fixme
 
+[MASTER]
+ignore-patterns=_plistlib.py
 
 [VARIABLES]
 # Maximum number of characters on a single line.
