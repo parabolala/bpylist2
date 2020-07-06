@@ -1,4 +1,9 @@
-import plistlib
+import sys
+
+if sys.version_info < (3, 8, 0):
+    from . import _plistlib as plistlib
+else:
+    import plistlib
 
 from typing import Mapping, Dict
 

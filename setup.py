@@ -11,7 +11,7 @@ with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='bpylist2',
-    version='3.0.1',
+    version='3.0.2',
     description=("parse and generate NSKeyedArchiver archives"),
     long_description=long_description,
     author='Marketcircle Inc., Ievgen Varavva',
@@ -41,5 +41,6 @@ setup(
     ],
 
     # 3.8 required for plistlib.UID.
-    python_requires=">=3.8",
+    # Includes local copy of 3.8's plistlib for < 3.8
+    python_requires=">=3.6",
 )

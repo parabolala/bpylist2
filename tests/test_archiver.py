@@ -1,5 +1,11 @@
 from datetime import datetime, timezone
-import plistlib
+import sys
+
+if sys.version_info < (3, 8, 0):
+    from bpylist import _plistlib as plistlib
+else:
+    import plistlib
+
 import unittest
 
 import dataclasses
