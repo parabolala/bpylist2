@@ -8,7 +8,13 @@ class Error(Exception):
     pass
 
 
+_IGNORE_UNMAPPED_KEY = "__bpylist_ignore_unmapped__"
+
+
 def _verify_dataclass_has_fields(dataclass, plist_obj):
+    if getattr(dataclass, _IGNORE_UNMAPPED_KEY, False):
+        return
+
     dataclass_fields = dataclasses.fields(dataclass)
 
     skip_fields = {'$class'}
@@ -42,7 +48,17 @@ class DataclassArchiver:
             {'MyObjType': MyObjType }
     )
 
+    If you are only interested in certain fields, you can ignore unmapped
+    fields, so that no exception is raised:
+
+    @dataclasses.dataclass
+    class MyObjType(DataclassArchiver, ignore_unmapped=True):
+        int_field: int = 0
+        str_field: str = ""
     """
+    def __init_subclass__(cls, ignore_unmapped=False):
+        setattr(cls, _IGNORE_UNMAPPED_KEY, ignore_unmapped)
+
     @staticmethod
     def encode_archive(obj, archive):
         for field in dataclasses.fields(type(obj)):

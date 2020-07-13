@@ -67,7 +67,14 @@ class FooDataclass(archive_types.DataclassArchiver):
 
 
 @dataclasses.dataclass
-class DataclassMussingFields(archive_types.DataclassArchiver):
+class DataclassMissingFields(archive_types.DataclassArchiver):
+    int_field: int = 0
+
+
+@dataclasses.dataclass
+class DataclassIgnoreMissingFields(
+        archive_types.DataclassArchiver,
+        ignore_unmapped=True):
     int_field: int = 0
 
 
@@ -188,11 +195,25 @@ class UnarchiveTest(unittest.TestCase):
 
     def test_dataclass_not_fully_mapped(self):
         archiver.update_class_map({
-            'FooDataclass': DataclassMussingFields,
+            'FooDataclass': DataclassMissingFields,
         })
         try:
             with self.assertRaises(archive_types.Error):
                 self.unarchive('dataclass')
+        finally:
+            # Restore mapping.
+            archiver.update_class_map({
+                'FooDataclass': FooDataclass,
+            })
+
+    def test_dataclass_ignore_not_fully_mapped(self):
+        archiver.update_class_map({
+            'FooDataclass': DataclassIgnoreMissingFields,
+        })
+        try:
+            expected = DataclassIgnoreMissingFields(int_field=5)
+            actual = self.unarchive('dataclass')
+            self.assertEqual(actual, expected)
         finally:
             # Restore mapping.
             archiver.update_class_map({
