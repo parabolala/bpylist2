@@ -61,7 +61,12 @@ import struct
 from xml.parsers.expat import ParserCreate
 
 
+
 PlistFormat = enum.Enum('PlistFormat', 'FMT_XML FMT_BINARY', module=__name__)
+
+# Make linter/mypy happy before updating globals.
+FMT_XML, FMT_BINARY = range(2)
+
 globals().update(PlistFormat.__members__)
 
 

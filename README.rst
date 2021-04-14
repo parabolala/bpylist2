@@ -143,5 +143,5 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/bpylist2.svg
    :target: https://pypi.org/project/bpylist2/
-.. |Build Status| image:: https://travis-ci.org/xa4a/bpylist2.svg?branch=master
-   :target: https://travis-ci.org/xa4a/bpylist2
+.. |Build Status| image:: https://travis-ci.org/parabolala/bpylist2.svg?branch=master
+   :target: https://travis-ci.org/parabolala/bpylist2
