@@ -1,7 +1,7 @@
 bpylist2 |pypi version| |Build Status|
 ======================================
 
-This is a fork of Marketcircle/bpylist, which is hopefully more responsive to PRs.
+This is a fork of Marketcircle/bpylist. This one is hopefully more responsive to PRs.
 
 Implementation of the `Apple's Binary
 Plist <https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man5/plist.5.html>`__
@@ -19,7 +19,7 @@ KeyedArchives
 ~~~~~~~~~~~~~
 
 ``NSKeyedArchiver`` is an Apple proprietary serialization format for
-Cocoa objects. ``bpylist`` supports reading and writing
+Cocoa objects. ``bpylist2`` supports reading and writing
 ``NSKeyedArchiver`` compatible archives. The API is similar to the
 binary plist API.
 
@@ -27,7 +27,7 @@ binary plist API.
 
 .. code:: python
 
-    from bpylist import archiver
+    from bpylist2 import archiver
 
     with open('my_archived_object', 'rb') as f:
         archiver.unarchive(f.read())
@@ -36,7 +36,7 @@ binary plist API.
 
 .. code:: python
 
-    from bpylist import archiver
+    from bpylist2 import archiver
 
     my_object = { 'foo':'bar', 'some_array': [1,2,3,4] }
     archiver.archive(my_object)
@@ -70,7 +70,7 @@ The Python class needs to implement the ``encode_archive`` and
 
     ## Define a Python Class
 
-    from bpylist import archiver
+    from bpylist2 import archiver
 
     class MyClass:
         first_property = None

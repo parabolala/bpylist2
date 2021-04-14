@@ -11,14 +11,14 @@ with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='bpylist2',
-    version='3.0.3',
+    version='4.0.1',
     description=("Parse and generate NSKeyedArchiver archives"),
     long_description=long_description,
     author='Marketcircle Inc., Ievgen Varavva',
     author_email='fuzzy.parabola@gmail.com',
     url='https://github.com/parabolala/bpylist2',
     packages=[
-        'bpylist',
+        'bpylist2',
     ],
     setup_requires=[
         "pytest-runner==5.3.0",

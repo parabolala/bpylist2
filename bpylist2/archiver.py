@@ -1,7 +1,7 @@
 import sys
 from typing import Mapping, Dict
 
-from bpylist.archive_types import timestamp, NSMutableData
+from bpylist2.archive_types import timestamp, NSMutableData
 
 if sys.version_info < (3, 8, 0):
     from . import _plistlib as plistlib

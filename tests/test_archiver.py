@@ -3,13 +3,13 @@ from datetime import datetime, timezone
 import sys
 import unittest
 
-from bpylist import archiver, archive_types
-from bpylist.archive_types import timestamp, NSMutableData
+from bpylist2 import archiver, archive_types
+from bpylist2.archive_types import timestamp, NSMutableData
 from tests.fixtures import get_fixture
 
 if sys.version_info < (3, 8, 0):
     # pylint: disable=ungrouped-imports
-    from bpylist import _plistlib as plistlib
+    from bpylist2 import _plistlib as plistlib
     # pylint: enable=ungrouped-imports
 else:
     import plistlib  # type: ignore
