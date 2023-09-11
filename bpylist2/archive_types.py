@@ -128,5 +128,5 @@ class NSMutableData(DataclassArchiver):
     NSdata: Optional[bytes] = None
 
     def __repr__(self):
-        return "NSMutableData(%s bytes)" % (
-            'null' if self.NSdata is None else len(self.NSdata))
+        n_bytes = 'null' if self.NSdata is None else len(self.NSdata)
+        return f"NSMutableData({n_bytes} bytes)"

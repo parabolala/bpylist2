@@ -102,7 +102,7 @@ class DictArchive:
         val_uids = archive_obj.decode('NS.objects')
 
         count = len(key_uids)
-        d = dict()
+        d = {}
 
         for i in range(count):
             key = archive_obj.decode_index(key_uids[i])

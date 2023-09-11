@@ -111,9 +111,8 @@ How to publish a new version to PyPI
 
 .. code-block:: bash
 
-    $ pip install twine wheel
-    $ python setup.py sdist bdist_wheel
-    $ twine upload dist/*
+    $ poetry build 
+    $ poetry publish
 
 License
 -------
