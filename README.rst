@@ -106,6 +106,16 @@ Python 3.8 `plistlib <https://github.com/python/cpython/blob/e51dd9dad6590bf3a94
 is bundled with `bpylist2` (Specifically, commit `9054967 <https://github.com/python/cpython/commit/90549676e063c2c818cfc14213d3adb7edcc2bd5>`__).  
 This version will only be used if `bpylist2` detects it is running on Python < 3.8.
 
+Running tests
+-------------
+
+The test suite uses the standard library's ``unittest`` module and can be
+executed with ``make``::
+
+    $ make test
+
+Lint checks are available via ``make lint``.
+
 How to publish a new version to PyPI
 ------------------------------------
 

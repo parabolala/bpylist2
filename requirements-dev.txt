@@ -1,0 +1,8 @@
+pre-commit
+ruff
+black
+mypy
+pytest
+pytest-pylint
+pytest-mypy
+pytest-pycodestyle
