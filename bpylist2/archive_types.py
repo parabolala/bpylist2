@@ -17,16 +17,16 @@ def _verify_dataclass_has_fields(dataclass, plist_obj):
 
     dataclass_fields = dataclasses.fields(dataclass)
 
-    skip_fields = {'$class'}
+    skip_fields = {"$class"}
 
     fields_to_verify = plist_obj.keys() - skip_fields
     fields_with_no_dots = {
-        (f if not f.startswith('NS.') else 'NS' + f[3:])
-        for f in fields_to_verify}
+        (f if not f.startswith("NS.") else "NS" + f[3:])
+        for f in fields_to_verify
+    }
     unmapped_fields = fields_with_no_dots - {f.name for f in dataclass_fields}
     if unmapped_fields:
-        raise Error(
-            f"Unmapped fields: {unmapped_fields} for class {dataclass}")
+        raise Error(f"Unmapped fields: {unmapped_fields} for class {dataclass}")
 
 
 class DataclassArchiver:
@@ -56,6 +56,7 @@ class DataclassArchiver:
         int_field: int = 0
         str_field: str = ""
     """
+
     def __init_subclass__(cls, ignore_unmapped=False):
         setattr(cls, _IGNORE_UNMAPPED_KEY, ignore_unmapped)
 
@@ -63,8 +64,8 @@ class DataclassArchiver:
     def encode_archive(obj, archive):
         for field in dataclasses.fields(type(obj)):
             archive_field_name = field.name
-            if archive_field_name[:2] == 'NS':
-                archive_field_name = 'NS.' + archive_field_name[2:]
+            if archive_field_name[:2] == "NS":
+                archive_field_name = "NS." + archive_field_name[2:]
             archive.encode(archive_field_name, getattr(obj, field.name))
 
     @classmethod
@@ -73,8 +74,8 @@ class DataclassArchiver:
         field_values = {}
         for field in dataclasses.fields(cls):
             archive_field_name = field.name
-            if archive_field_name[:2] == 'NS':
-                archive_field_name = 'NS.' + archive_field_name[2:]
+            if archive_field_name[:2] == "NS":
+                archive_field_name = "NS." + archive_field_name[2:]
             value = archive.decode(archive_field_name)
             if isinstance(value, bytearray):
                 value = bytes(value)
@@ -108,12 +109,12 @@ class timestamp(float):
     def encode_archive(obj, archive):
         "Delegate for packing timestamps back into the NSDate archive format"
         offset = obj - timestamp.unix2apple_epoch_delta
-        archive.encode('NS.time', offset)
+        archive.encode("NS.time", offset)
 
     @staticmethod
     def decode_archive(archive):
         "Delegate for unpacking NSDate objects from an archiver.Archive"
-        offset = archive.decode('NS.time')
+        offset = archive.decode("NS.time")
         return timestamp(timestamp.unix2apple_epoch_delta + offset)
 
     def __str__(self):
@@ -128,5 +129,5 @@ class NSMutableData(DataclassArchiver):
     NSdata: Optional[bytes] = None
 
     def __repr__(self):
-        n_bytes = 'null' if self.NSdata is None else len(self.NSdata)
+        n_bytes = "null" if self.NSdata is None else len(self.NSdata)
         return f"NSMutableData({n_bytes} bytes)"
